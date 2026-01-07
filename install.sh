@@ -12,14 +12,14 @@ set -euo pipefail
 
 # Script configuration
 VERSION="1.0.0"
-REPO_URL="https://github.com/seanGSISG/DGX-Spark-Autoconfig.git"
+REPO_URL="https://github.com/seanGSISG/linux-dev-autoconfig.git"
 
 # Detect if running from curl pipe or locally
 if [[ -f "${BASH_SOURCE[0]}" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 else
     # Running from curl pipe - clone repo first
-    SCRIPT_DIR="/tmp/DGX-Spark-Autoconfig"
+    SCRIPT_DIR="/tmp/linux-dev-autoconfig"
     echo -e "\033[0;34m[INFO]\033[0m Fetching repository..."
     rm -rf "$SCRIPT_DIR"
     git clone --depth=1 "$REPO_URL" "$SCRIPT_DIR"

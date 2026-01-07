@@ -15,7 +15,7 @@ This repository provides automated development environment setup for **Linux sys
 ## Repository Structure
 
 ```
-DGX-Spark-Autoconfig/
+linux-dev-autoconfig/
 ├── install.sh                    # Main installer (6 phases)
 ├── config/
 │   ├── zsh/

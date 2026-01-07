@@ -16,13 +16,13 @@ Automated development environment setup for **Linux systems** (Debian/Ubuntu). P
 
 **One-liner install:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/seanGSISG/DGX-Spark-Autoconfig/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/seanGSISG/linux-dev-autoconfig/main/install.sh | bash
 ```
 
 **Or clone and run:**
 ```bash
-git clone https://github.com/seanGSISG/DGX-Spark-Autoconfig.git
-cd DGX-Spark-Autoconfig
+git clone https://github.com/seanGSISG/linux-dev-autoconfig.git
+cd linux-dev-autoconfig
 ./install.sh
 exec zsh
 ```

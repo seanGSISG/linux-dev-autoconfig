@@ -22,10 +22,12 @@ if [[ -n "$TERM" ]] && ! infocmp "$TERM" &>/dev/null; then
   export TERM="xterm-256color"
 fi
 
-# --- CUDA paths (if CUDA is installed) ---
-export PATH="/usr/local/cuda/bin:$PATH"
-export LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH:-}"
-export CUDA_HOME="/usr/local/cuda"
+# --- CUDA paths (only if CUDA is installed) ---
+if [[ -d "/usr/local/cuda" ]]; then
+  export PATH="/usr/local/cuda/bin:$PATH"
+  export LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH:-}"
+  export CUDA_HOME="/usr/local/cuda"
+fi
 
 # --- Paths (early) ---
 export PATH="$HOME/.cargo/bin:$PATH"
