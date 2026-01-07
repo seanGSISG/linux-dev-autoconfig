@@ -156,7 +156,7 @@ export FZF_DISABLE_KEYBINDINGS=1
 
 # --- Prompt config ---
 if [[ "$TERM_PROGRAM" == "vscode" ]]; then
-  PROMPT='%n@%m:%~%# '
+  PROMPT='%m@%n:%~%# '
   RPROMPT=''
 else
   [[ -f "$HOME/.p10k.zsh" ]] && source "$HOME/.p10k.zsh"
