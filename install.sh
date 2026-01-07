@@ -24,7 +24,16 @@ else
     rm -rf "$SCRIPT_DIR"
     git clone --depth=1 "$REPO_URL" "$SCRIPT_DIR"
 fi
-TARGET_USER="${TARGET_USER:-adminuser}"
+
+# Detect system architecture
+ARCH="$(uname -m)"
+case "$ARCH" in
+    x86_64)  DEB_ARCH="amd64"; TARBALL_ARCH="x86_64" ;;
+    aarch64) DEB_ARCH="arm64"; TARBALL_ARCH="arm64" ;;
+    arm64)   DEB_ARCH="arm64"; TARBALL_ARCH="arm64" ;;
+    *)       echo "Unsupported architecture: $ARCH"; exit 1 ;;
+esac
+TARGET_USER="${TARGET_USER:-$(whoami)}"
 TARGET_HOME="${TARGET_HOME:-/home/$TARGET_USER}"
 DGXSPARK_HOME="$TARGET_HOME/.dgxspark"
 
@@ -259,7 +268,7 @@ phase5_cli_tools() {
         as_root apt-get install -y lsd 2>/dev/null || {
             # Fallback: download from GitHub releases
             local lsd_version="1.1.5"
-            local lsd_url="https://github.com/lsd-rs/lsd/releases/download/v${lsd_version}/lsd_${lsd_version}_arm64.deb"
+            local lsd_url="https://github.com/lsd-rs/lsd/releases/download/v${lsd_version}/lsd_${lsd_version}_${DEB_ARCH}.deb"
             curl -fsSL "$lsd_url" -o /tmp/lsd.deb && as_root dpkg -i /tmp/lsd.deb && rm /tmp/lsd.deb
         }
     fi
@@ -294,7 +303,7 @@ phase5_cli_tools() {
         as_root apt-get install -y lazygit 2>/dev/null || {
             # Fallback installation
             local lazygit_version="0.44.1"
-            local lazygit_url="https://github.com/jesseduffield/lazygit/releases/download/v${lazygit_version}/lazygit_${lazygit_version}_Linux_arm64.tar.gz"
+            local lazygit_url="https://github.com/jesseduffield/lazygit/releases/download/v${lazygit_version}/lazygit_${lazygit_version}_Linux_${TARBALL_ARCH}.tar.gz"
             curl -fsSL "$lazygit_url" | tar xz -C /tmp lazygit && \
             as_root mv /tmp/lazygit /usr/local/bin/
         } || true
