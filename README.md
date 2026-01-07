@@ -4,6 +4,46 @@ Automated development environment setup for **Linux systems** (Debian/Ubuntu). P
 
 **Supports:** x86_64 and ARM64 architectures (auto-detected)
 
+## Quick Start
+
+**One-liner install:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/seanGSISG/linux-dev-autoconfig/main/install.sh | bash
+```
+
+When prompted, you can optionally set up private configs (SSH, Claude knowledge base) by pasting your age decryption key from Bitwarden.
+
+**After installation:**
+```bash
+exec zsh                    # Start new shell
+sudo tailscale up           # Connect VPN (first time)
+claude login                # Authenticate Claude Code
+```
+
+## How It Works
+
+This installer uses a **two-stage approach**:
+
+```
+Stage 1: Bootstrap (this repo)
+├── Install minimal deps (git, curl, age)
+└── Install chezmoi
+
+Stage 2: Dotfiles (seanGSISG/dotfiles)
+├── Apply shell configs (zsh, p10k, aliases)
+├── Decrypt private configs (SSH, Claude knowledge)
+└── Run tool installation script
+```
+
+### With Private Configs (Recommended)
+If you have the age decryption key, you get:
+- Pre-configured SSH hosts
+- Claude Code with full homelab knowledge
+- All sensitive configs decrypted and ready
+
+### Without Private Configs
+Still installs all the tools - just skip when prompted for the key.
+
 ## Features
 
 - **Shell**: zsh + Oh My Zsh + Powerlevel10k (lean theme)
@@ -12,55 +52,6 @@ Automated development environment setup for **Linux systems** (Debian/Ubuntu). P
 - **Python**: UV (Astral) for fast venv/package management
 - **AI Agents**: Claude Code + Codex CLI (with "vibe mode" aliases)
 - **Configs**: Ghostty terminal, tmux, Claude Code git safety hooks
-
-## Quick Start
-
-**One-liner install:**
-```bash
-curl -fsSL https://raw.githubusercontent.com/seanGSISG/linux-dev-autoconfig/main/install.sh | bash
-```
-
-**Or clone and run:**
-```bash
-git clone https://github.com/seanGSISG/linux-dev-autoconfig.git
-cd linux-dev-autoconfig
-./install.sh
-exec zsh
-```
-
-**After installation:**
-```bash
-# Connect to Tailscale (first time)
-sudo tailscale up
-
-# Update tldr pages
-tldr --update
-
-# Check what's installed
-devenv info
-```
-
-## Documentation
-
-Comprehensive documentation is available in the [`docs/`](docs/) folder:
-
-| Document | Description |
-|----------|-------------|
-| [docs/tools.md](docs/tools.md) | All installed tools with usage examples |
-| [docs/aliases.md](docs/aliases.md) | Complete shell alias reference |
-| [docs/commands.md](docs/commands.md) | CLI commands and utilities |
-| [docs/keybindings.md](docs/keybindings.md) | Ghostty, tmux, and shell shortcuts |
-
-## Installation Phases
-
-| Phase | Description |
-|-------|-------------|
-| 1 | Base dependencies (apt packages, zsh) |
-| 2 | User setup (permissions, groups) |
-| 3 | Filesystem (directories, configs) |
-| 4 | Shell setup (Oh My Zsh, Powerlevel10k, plugins) |
-| 5 | CLI tools (lsd, bat, ripgrep, Tailscale, mosh, etc.) |
-| 6 | AI agents (UV, Bun, Codex CLI, hooks) |
 
 ## Installed Tools
 
@@ -90,40 +81,42 @@ Comprehensive documentation is available in the [`docs/`](docs/) folder:
 |-------|-------------|
 | `ts` | Tailscale status |
 | `tsup` | Connect to Tailscale |
-| `tsip` | Show Tailscale IP |
-| `help` | Simplified man pages (tldr) |
-| `lg` | Lazygit TUI |
 | `ccd` | Claude Code (dangerous mode) |
+| `lg` | Lazygit TUI |
+| `help` | Simplified man pages (tldr) |
 
-See [docs/aliases.md](docs/aliases.md) for the complete list.
+## Private Configs (Age Encryption)
 
-## Directory Structure
+Sensitive files are encrypted with [age](https://github.com/FiloSottile/age) and stored in the [dotfiles repo](https://github.com/seanGSISG/dotfiles):
 
-```
-~/.devenv/             # Main config directory
-  zsh/
-    devenv.zshrc       # Main shell config
-    aliases.zsh        # All shell aliases
-    p10k.zsh           # Powerlevel10k config
-  tmux/
-    tmux.conf          # Tmux config
+| File | Contains |
+|------|----------|
+| `~/.ssh/config` | SSH hosts, IP addresses |
+| `~/dev/claude-home/SSH.md` | Homelab documentation |
 
-~/.config/ghostty/     # Ghostty terminal config
-~/.claude/             # Claude Code config
-  hooks/
-    git_safety_guard.py  # Git safety hook
-```
+To decrypt, you need the age key stored in Bitwarden ("Dotfiles Age Key").
 
-## Commands
+## Manual Setup
 
-### devenv CLI
+If the one-liner doesn't work:
 
 ```bash
-devenv info      # Show system info (GPU, CUDA, tools)
-devenv doctor    # Check system health
-devenv update    # Update tools
-devenv version   # Show version
-devenv help      # Show help
+# 1. Install chezmoi
+sh -c "$(curl -fsLS get.chezmoi.io)"
+
+# 2. Save your age key
+mkdir -p ~/.config/chezmoi
+echo "AGE-SECRET-KEY-1..." > ~/.config/chezmoi/key.txt
+chmod 600 ~/.config/chezmoi/key.txt
+
+# 3. Initialize and apply
+~/.local/bin/chezmoi init --apply seanGSISG/dotfiles
+```
+
+## Updating
+
+```bash
+chezmoi update    # Pull latest dotfiles and apply
 ```
 
 ## Requirements
@@ -133,10 +126,14 @@ devenv help      # Show help
 - Sudo access
 - Internet connection
 
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [docs/tools.md](docs/tools.md) | All installed tools with usage examples |
+| [docs/aliases.md](docs/aliases.md) | Complete shell alias reference |
+| [docs/keybindings.md](docs/keybindings.md) | Ghostty, tmux, and shell shortcuts |
+
 ## License
 
 MIT License
-
----
-
-Originally adapted from [WSL2-AI-AUTOCONFIG](https://github.com/seanGSISG/WSL2-AI-AUTOCONFIG).
