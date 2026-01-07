@@ -15,7 +15,7 @@ VERSION="1.0.0"
 REPO_URL="https://github.com/seanGSISG/linux-dev-autoconfig.git"
 
 # Detect if running from curl pipe or locally
-if [[ -f "${BASH_SOURCE[0]}" ]]; then
+if [[ ${BASH_SOURCE[0]+_} && -f "${BASH_SOURCE[0]}" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 else
     # Running from curl pipe - clone repo first
