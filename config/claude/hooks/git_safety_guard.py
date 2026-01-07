@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-DGX-Spark Git Safety Guard - Claude Code PreToolUse Hook
+Git Safety Guard - Claude Code PreToolUse Hook
 
 Blocks destructive git/filesystem commands before execution to prevent
 accidental data loss. Integrates with Claude Code's hook system.
@@ -483,7 +483,7 @@ def main():
                     "hookEventName": "PreToolUse",
                     "permissionDecision": "deny",
                     "permissionDecisionReason": (
-                        f"BLOCKED by DGX-Spark git_safety_guard.py\n\n"
+                        f"BLOCKED by git_safety_guard.py\n\n"
                         f"Reason: {reason}\n\n"
                         f"Command: {command}\n\n"
                         "If you really need to run this command, ask the user for explicit permission."

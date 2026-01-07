@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # ============================================================
-# DGX-Spark-Autoconfig - Installation Script
+# Linux Dev Environment Autoconfig - Installation Script
 # ============================================================
-# Automated setup for NVIDIA DGX Spark development environment
+# Automated setup for Linux development environments
 # Optimized for Python/AI development with modern shell tools
 #
 # Usage: ./install.sh [--help] [--dry-run] [--skip-phase N]
@@ -35,7 +35,7 @@ case "$ARCH" in
 esac
 TARGET_USER="${TARGET_USER:-$(whoami)}"
 TARGET_HOME="${TARGET_HOME:-/home/$TARGET_USER}"
-DGXSPARK_HOME="$TARGET_HOME/.dgxspark"
+DEVENV_HOME="$TARGET_HOME/.devenv"
 
 # Colors for output
 RED='\033[0;31m'
@@ -58,9 +58,9 @@ log_step() { echo -e "${CYAN}[$1]${NC} $2"; }
 
 show_help() {
     cat << EOF
-DGX-Spark-Autoconfig v${VERSION}
+Linux Dev Autoconfig v${VERSION}
 ================================
-Automated setup for NVIDIA DGX Spark development environment.
+Automated setup for Linux development environments.
 
 Usage: ./install.sh [OPTIONS]
 
@@ -153,7 +153,7 @@ phase2_user_setup() {
         log_success "Added $TARGET_USER to docker group"
     fi
 
-    # Ensure passwordless sudo (should already be configured on DGX)
+    # Check for passwordless sudo
     if as_root grep -q "^${TARGET_USER}.*NOPASSWD" /etc/sudoers 2>/dev/null; then
         log_success "Passwordless sudo already configured"
     else
@@ -173,7 +173,7 @@ phase3_filesystem() {
     # Create directories
     mkdir -p "$TARGET_HOME/projects"
     mkdir -p "$TARGET_HOME/dev"
-    mkdir -p "$DGXSPARK_HOME"
+    mkdir -p "$DEVENV_HOME"
     mkdir -p "$TARGET_HOME/.local/bin"
     mkdir -p "$TARGET_HOME/.config/ghostty"
     mkdir -p "$TARGET_HOME/.claude/hooks"
@@ -226,14 +226,14 @@ phase4_shell_setup() {
     # Copy configuration files
     log_info "Installing shell configuration..."
 
-    mkdir -p "$DGXSPARK_HOME/zsh"
-    cp "$SCRIPT_DIR/config/zsh/dgxspark.zshrc" "$DGXSPARK_HOME/zsh/"
-    cp "$SCRIPT_DIR/config/zsh/p10k.zsh" "$DGXSPARK_HOME/zsh/"
-    cp "$SCRIPT_DIR/config/zsh/aliases.zsh" "$DGXSPARK_HOME/zsh/"
+    mkdir -p "$DEVENV_HOME/zsh"
+    cp "$SCRIPT_DIR/config/zsh/devenv.zshrc" "$DEVENV_HOME/zsh/"
+    cp "$SCRIPT_DIR/config/zsh/p10k.zsh" "$DEVENV_HOME/zsh/"
+    cp "$SCRIPT_DIR/config/zsh/aliases.zsh" "$DEVENV_HOME/zsh/"
 
     # Create symlinks
-    ln -sf "$DGXSPARK_HOME/zsh/dgxspark.zshrc" "$TARGET_HOME/.zshrc"
-    ln -sf "$DGXSPARK_HOME/zsh/p10k.zsh" "$TARGET_HOME/.p10k.zsh"
+    ln -sf "$DEVENV_HOME/zsh/devenv.zshrc" "$TARGET_HOME/.zshrc"
+    ln -sf "$DEVENV_HOME/zsh/p10k.zsh" "$TARGET_HOME/.p10k.zsh"
 
     # Change default shell to zsh
     if [[ "$SHELL" != "$(which zsh)" ]]; then
@@ -316,9 +316,9 @@ phase5_cli_tools() {
     fi
 
     # Copy tmux configuration
-    mkdir -p "$DGXSPARK_HOME/tmux"
-    cp "$SCRIPT_DIR/config/tmux/tmux.conf" "$DGXSPARK_HOME/tmux/"
-    ln -sf "$DGXSPARK_HOME/tmux/tmux.conf" "$TARGET_HOME/.tmux.conf"
+    mkdir -p "$DEVENV_HOME/tmux"
+    cp "$SCRIPT_DIR/config/tmux/tmux.conf" "$DEVENV_HOME/tmux/"
+    ln -sf "$DEVENV_HOME/tmux/tmux.conf" "$TARGET_HOME/.tmux.conf"
 
     log_success "CLI tools installed"
 }
@@ -384,11 +384,11 @@ phase6_agents_finalization() {
     cp "$SCRIPT_DIR/config/ghostty/config" "$TARGET_HOME/.config/ghostty/config"
 
     # Copy DGX utilities
-    mkdir -p "$DGXSPARK_HOME/scripts/lib"
-    cp "$SCRIPT_DIR/scripts/lib/dgx.sh" "$DGXSPARK_HOME/scripts/lib/"
+    mkdir -p "$DEVENV_HOME/scripts/lib"
+    cp "$SCRIPT_DIR/scripts/lib/dgx.sh" "$DEVENV_HOME/scripts/lib/"
 
     # Create VERSION file
-    echo "$VERSION" > "$DGXSPARK_HOME/VERSION"
+    echo "$VERSION" > "$DEVENV_HOME/VERSION"
 
     log_success "AI agents and configuration complete"
 }
@@ -419,7 +419,7 @@ main() {
             --user)
                 TARGET_USER="$2"
                 TARGET_HOME="/home/$TARGET_USER"
-                DGXSPARK_HOME="$TARGET_HOME/.dgxspark"
+                DEVENV_HOME="$TARGET_HOME/.devenv"
                 shift 2
                 ;;
             *)
@@ -433,8 +433,8 @@ main() {
     # Header
     echo ""
     echo "=============================================="
-    echo "  DGX-Spark-Autoconfig v${VERSION}"
-    echo "  NVIDIA DGX Spark Development Environment"
+    echo "  Linux Dev Autoconfig v${VERSION}"
+    echo "  Development Environment Setup"
     echo "=============================================="
     echo ""
 
@@ -446,10 +446,13 @@ main() {
     # Pre-flight checks
     check_not_root
 
-    # Source DGX utilities for preflight
+    # Source system utilities for preflight (optional - only on supported hardware)
     if [[ -f "$SCRIPT_DIR/scripts/lib/dgx.sh" ]]; then
         source "$SCRIPT_DIR/scripts/lib/dgx.sh"
-        dgx_preflight || log_warn "Some preflight checks failed - continuing anyway"
+        # Only run DGX-specific preflight on ARM64 systems (likely DGX Spark)
+        if [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]]; then
+            dgx_preflight || log_warn "Some preflight checks failed - continuing anyway"
+        fi
     fi
 
     echo ""
@@ -481,12 +484,12 @@ main() {
 
     # Success message
     echo "=============================================="
-    log_success "DGX-Spark-Autoconfig installation complete!"
+    log_success "Linux Dev Autoconfig installation complete!"
     echo "=============================================="
     echo ""
     echo "Next steps:"
     echo "  1. Start a new terminal or run: exec zsh"
-    echo "  2. Run 'dgxspark info' to verify setup"
+    echo "  2. Run 'devenv info' to verify setup"
     echo "  3. Run 'codex login' to authenticate Codex CLI"
     echo ""
     echo "Useful commands:"
@@ -494,7 +497,7 @@ main() {
     echo "  ccd         - Claude Code (dangerously enabled)"
     echo "  cod         - Codex CLI (dangerously enabled)"
     echo "  uca         - Update agent CLIs"
-    echo "  dgxspark    - DGX-Spark utilities"
+    echo "  devenv      - Development environment utilities"
     echo ""
 }
 

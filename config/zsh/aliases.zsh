@@ -1,6 +1,6 @@
-# DGX-Spark Aliases
+# Linux Dev Autoconfig - Aliases
 # Separate aliases file for easy customization
-# Sourced by dgxspark.zshrc
+# Sourced by devenv.zshrc
 
 # =============================================================================
 # Git

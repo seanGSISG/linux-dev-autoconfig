@@ -1,6 +1,8 @@
-# DGX-Spark-Autoconfig
+# Linux Dev Autoconfig
 
-Automated development environment setup for **NVIDIA DGX Spark** systems. Provides a modern shell environment optimized for Python and AI development.
+Automated development environment setup for **Linux systems** (Debian/Ubuntu). Provides a modern shell environment optimized for Python and AI development.
+
+**Supports:** x86_64 and ARM64 architectures (auto-detected)
 
 ## Features
 
@@ -72,14 +74,14 @@ uca   # Update all agent CLIs
 ## Directory Structure
 
 ```
-~/.dgxspark/           # Main config directory
+~/.devenv/             # Main config directory
   zsh/
-    dgxspark.zshrc     # Main shell config
+    devenv.zshrc       # Main shell config
     p10k.zsh           # Powerlevel10k config
   tmux/
     tmux.conf          # Tmux config
   scripts/lib/
-    dgx.sh             # DGX utilities
+    dgx.sh             # System utilities
 
 ~/.config/ghostty/     # Ghostty terminal config
 ~/.claude/             # Claude Code config
@@ -89,14 +91,14 @@ uca   # Update all agent CLIs
 
 ## Commands
 
-### dgxspark CLI
+### devenv CLI
 
 ```bash
-dgxspark info      # Show system info (GPU, CUDA, tools)
-dgxspark doctor    # Check system health
-dgxspark update    # Update tools
-dgxspark version   # Show version
-dgxspark help      # Show help
+devenv info      # Show system info (GPU, CUDA, tools)
+devenv doctor    # Check system health
+devenv update    # Update tools
+devenv version   # Show version
+devenv help      # Show help
 ```
 
 ### Common Aliases
@@ -106,19 +108,14 @@ dgxspark help      # Show help
 | `gs` | `git status` |
 | `gd` | `git diff` |
 | `lg` | `lazygit` |
-| `p` | `cd ~/projects` |
 | `dev` | `cd ~/dev` |
 
 ## Requirements
 
-- NVIDIA DGX Spark with GB10 GPU (Blackwell architecture)
-- Ubuntu 24.04 LTS (ARM64)
+- Debian/Ubuntu-based Linux (apt package manager)
+- x86_64 or ARM64 architecture
 - Sudo access
 - Internet connection
-
-## Related Projects
-
-- **[dgx-spark-vllm-setup](https://github.com/seanGSISG/dgx-spark-vllm-setup)** - vLLM installer with Blackwell-specific patches for LLM inference workloads
 
 ## License
 
@@ -126,4 +123,4 @@ MIT License
 
 ---
 
-Adapted from [WSL2-AI-AUTOCONFIG](https://github.com/seanGSISG/WSL2-AI-AUTOCONFIG) for native Linux on DGX Spark.
+Originally adapted from [WSL2-AI-AUTOCONFIG](https://github.com/seanGSISG/WSL2-AI-AUTOCONFIG).

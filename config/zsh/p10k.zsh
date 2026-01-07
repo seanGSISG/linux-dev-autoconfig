@@ -1,6 +1,6 @@
-# DGX-Spark Powerlevel10k Configuration
+# Linux Dev Autoconfig - Powerlevel10k Configuration
 # Style: Lean (clean, no background colors)
-# Based on official p10k-lean.zsh with DGX-Spark-friendly defaults
+# Based on official p10k-lean.zsh with sensible defaults
 # To customize further: p10k configure
 
 # Temporarily change options

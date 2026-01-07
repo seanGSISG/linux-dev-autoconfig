@@ -1,6 +1,6 @@
 # shellcheck shell=bash disable=SC2034,SC1091
-# ~/.dgxspark/zsh/dgxspark.zshrc
-# DGX-Spark-Autoconfig canonical zsh config (managed). Safe, fast, minimal duplication.
+# ~/.devenv/zsh/devenv.zshrc
+# Linux Dev Autoconfig - canonical zsh config (managed). Safe, fast, minimal duplication.
 #
 # SC2034: ZSH_THEME, plugins, PROMPT, RPROMPT are used by zsh/omz (not bash)
 # SC1091: Dynamic source paths can't be followed by shellcheck
@@ -22,7 +22,7 @@ if [[ -n "$TERM" ]] && ! infocmp "$TERM" &>/dev/null; then
   export TERM="xterm-256color"
 fi
 
-# --- DGX-Spark CUDA paths ---
+# --- CUDA paths (if CUDA is installed) ---
 export PATH="/usr/local/cuda/bin:$PATH"
 export LD_LIBRARY_PATH="/usr/local/cuda/lib64:${LD_LIBRARY_PATH:-}"
 export CUDA_HOME="/usr/local/cuda"
@@ -84,7 +84,7 @@ else
 fi
 
 # --- Aliases (loaded from separate file) ---
-[[ -f "$HOME/.dgxspark/zsh/aliases.zsh" ]] && source "$HOME/.dgxspark/zsh/aliases.zsh"
+[[ -f "$HOME/.devenv/zsh/aliases.zsh" ]] && source "$HOME/.devenv/zsh/aliases.zsh"
 
 # --- Custom functions ---
 mkcd() { mkdir -p "$1" && cd "$1" || return; }
@@ -113,7 +113,7 @@ extract() {
 # --- Safe "ls after cd" via chpwd hook (no overriding cd) ---
 # Uses MINIMAL lsd output (icons + names only)
 autoload -U add-zsh-hook
-_dgxspark_ls_after_cd() {
+_devenv_ls_after_cd() {
   # only in interactive shells
   [[ -o interactive ]] || return
   if command -v lsd &>/dev/null; then
@@ -124,7 +124,7 @@ _dgxspark_ls_after_cd() {
     ls
   fi
 }
-add-zsh-hook chpwd _dgxspark_ls_after_cd
+add-zsh-hook chpwd _devenv_ls_after_cd
 
 # --- Tool settings ---
 export UV_LINK_MODE=copy
@@ -171,44 +171,45 @@ if command -v atuin &>/dev/null; then
   bindkey -M vicmd '^R' atuin-search-vicmd 2>/dev/null
 fi
 
-# --- DGX-Spark env shim (optional) ---
+# --- Env shim (optional) ---
 [[ -f "$HOME/.local/bin/env" ]] && source "$HOME/.local/bin/env"
 
-# --- DGX-Spark CLI ---
-# Provides `dgxspark <subcommand>` for post-install utilities
-dgxspark() {
-  local dgxspark_home="${DGXSPARK_HOME:-$HOME/.dgxspark}"
-  local dgxspark_bin="$HOME/.local/bin/dgxspark"
+# --- Dev Environment CLI ---
+# Provides `devenv <subcommand>` for post-install utilities
+devenv() {
+  local devenv_home="${DEVENV_HOME:-$HOME/.devenv}"
+  local devenv_bin="$HOME/.local/bin/devenv"
   local cmd="${1:-help}"
   shift 1 2>/dev/null || true
 
   case "$cmd" in
     doctor|check)
-      if [[ -f "$dgxspark_home/scripts/lib/doctor.sh" ]]; then
-        bash "$dgxspark_home/scripts/lib/doctor.sh" "$@"
-      elif [[ -x "$dgxspark_bin" ]]; then
-        "$dgxspark_bin" doctor "$@"
+      if [[ -f "$devenv_home/scripts/lib/doctor.sh" ]]; then
+        bash "$devenv_home/scripts/lib/doctor.sh" "$@"
+      elif [[ -x "$devenv_bin" ]]; then
+        "$devenv_bin" doctor "$@"
       else
         echo "Error: doctor.sh not found"
         return 1
       fi
       ;;
     update)
-      if [[ -f "$dgxspark_home/scripts/lib/update.sh" ]]; then
-        bash "$dgxspark_home/scripts/lib/update.sh" "$@"
-      elif [[ -x "$dgxspark_bin" ]]; then
-        "$dgxspark_bin" update "$@"
+      if [[ -f "$devenv_home/scripts/lib/update.sh" ]]; then
+        bash "$devenv_home/scripts/lib/update.sh" "$@"
+      elif [[ -x "$devenv_bin" ]]; then
+        "$devenv_bin" update "$@"
       else
         echo "Error: update.sh not found"
         return 1
       fi
       ;;
     info|i)
-      echo "DGX-Spark-Autoconfig Environment"
-      echo "================================"
+      echo "Linux Dev Autoconfig Environment"
+      echo "================================="
       echo "Hostname: $(hostname)"
       echo "User: $(whoami)"
       echo "Shell: $SHELL"
+      echo "Arch: $(uname -m)"
       echo ""
       echo "CUDA: $(nvcc --version 2>/dev/null | grep release | awk '{print $6}' | tr -d ',' || echo 'not found')"
       echo "GPU: $(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -1 || echo 'not found')"
@@ -219,16 +220,16 @@ dgxspark() {
       echo "Codex: $(codex --version 2>/dev/null || echo 'not installed')"
       ;;
     version|-v|--version)
-      if [[ -f "$dgxspark_home/VERSION" ]]; then
-        cat "$dgxspark_home/VERSION"
+      if [[ -f "$devenv_home/VERSION" ]]; then
+        cat "$devenv_home/VERSION"
       else
-        echo "DGX-Spark-Autoconfig version unknown"
+        echo "Linux Dev Autoconfig version unknown"
       fi
       ;;
     help|-h|--help|*)
-      echo "DGX-Spark-Autoconfig - NVIDIA DGX Spark Development Environment"
+      echo "Linux Dev Autoconfig - Development Environment"
       echo ""
-      echo "Usage: dgxspark <command>"
+      echo "Usage: devenv <command>"
       echo ""
       echo "Commands:"
       echo "  info            Quick system overview (hostname, GPU, tools)"
