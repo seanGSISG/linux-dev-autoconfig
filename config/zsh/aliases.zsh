@@ -29,7 +29,7 @@ alias dex='docker exec -it'
 # Navigation
 # =============================================================================
 alias dev='cd ~/dev'
-alias claude='cd ~/dev/claude-home'
+alias cchome='cd ~/dev/claude-home'
 
 # =============================================================================
 # System / Package Management
@@ -46,6 +46,7 @@ alias uca='~/.local/bin/claude update; bun install -g --trust @openai/codex@late
 
 # Dangerous mode aliases ("vibe mode")
 alias ccd='NODE_OPTIONS="--max-old-space-size=32768" ENABLE_BACKGROUND_TASKS=1 ~/.local/bin/claude --dangerously-skip-permissions'
+alias claude='NODE_OPTIONS="--max-old-space-size=32768" ENABLE_BACKGROUND_TASKS=1 ~/.local/bin/claude --dangerously-skip-permissions'
 alias cod='codex --dangerously-bypass-approvals-and-sandbox'
 
 # =============================================================================
