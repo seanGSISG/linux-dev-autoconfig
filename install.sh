@@ -279,7 +279,7 @@ phase5_cli_tools() {
     # Install Tailscale (VPN mesh networking)
     if ! has_cmd tailscale; then
         log_info "Installing Tailscale..."
-        curl -fsSL https://tailscale.com/install.sh | sh || {
+        curl -fsSL https://tailscale.com/install.sh | bash || {
             log_warn "Tailscale installation failed - you can install manually later"
         }
     else
@@ -357,7 +357,7 @@ phase6_agents_finalization() {
     # Install UV (Astral)
     if ! has_cmd uv; then
         log_info "Installing UV (Python package manager)..."
-        curl -LsSf https://astral.sh/uv/install.sh | sh
+        curl -LsSf https://astral.sh/uv/install.sh | bash
     else
         log_success "UV already installed"
     fi
@@ -379,9 +379,9 @@ phase6_agents_finalization() {
         log_success "Claude Code already installed"
     else
         log_info "Installing Claude Code..."
-        curl -fsSL https://claude.ai/install.sh | sh || {
+        curl -fsSL https://claude.ai/install.sh | bash || {
             log_warn "Claude Code installation failed - install manually with:"
-            log_info "  curl -fsSL https://claude.ai/install.sh | sh"
+            log_info "  curl -fsSL https://claude.ai/install.sh | bash"
         }
     fi
 
