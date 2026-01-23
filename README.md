@@ -42,7 +42,7 @@ curl -fsSL https://raw.githubusercontent.com/seanGSISG/linux-dev-autoconfig/main
 ### Configs Applied
 - `~/.zshrc` - Shell config
 - `~/.p10k.zsh` - Prompt theme
-- `~/.dgxspark/zsh/aliases.zsh` - Aliases
+- `~/.devenv/zsh/aliases.zsh` - Aliases
 - `~/.tmux.conf` - Tmux config
 - `~/.config/ghostty/config` - Terminal config
 
@@ -98,14 +98,35 @@ sudo tailscale up     # Connect VPN
 claude login          # Auth Claude Code
 ```
 
-## Updating Configs
+## The `devenv` Command
 
-Configs are stored in `~/.linux-dev-autoconfig/config/`. To update:
+After installation, use the `devenv` command to manage your environment:
 
 ```bash
-cd ~/.linux-dev-autoconfig
+devenv doctor    # Check system health and tool status
+devenv update    # Update tools and configs to latest
+devenv info      # Quick system overview (hostname, GPU, tools)
+devenv version   # Show version
+devenv help      # Show help
+```
+
+### Update Options
+
+```bash
+devenv update            # Update everything
+devenv update --configs  # Update configs only
+devenv update --tools    # Update CLI tools only
+devenv update --agents   # Update AI agents only
+```
+
+## Manual Config Updates
+
+Configs are stored in `~/.devenv/config/`. To manually update:
+
+```bash
+cd ~/.devenv
 git pull
-# Re-run install.sh or manually copy specific configs
+devenv update --configs
 ```
 
 ## Requirements

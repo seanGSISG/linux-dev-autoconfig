@@ -198,8 +198,8 @@ install_ai_agents() {
 apply_configs() {
     log_info "Applying configurations..."
 
-    # Clone or update repo
-    local repo_dir="$HOME/.linux-dev-autoconfig"
+    # Clone or update repo to ~/.devenv
+    local repo_dir="$HOME/.devenv"
     if [[ -d "$repo_dir" ]]; then
         git -C "$repo_dir" pull --ff-only 2>/dev/null || true
     else
@@ -208,15 +208,14 @@ apply_configs() {
 
     # Create directories
     mkdir -p "$HOME/.config/ghostty"
-    mkdir -p "$HOME/.dgxspark/zsh"
-    mkdir -p "$HOME/.dgxspark/tmux"
+    mkdir -p "$HOME/.devenv/zsh"
     mkdir -p "$HOME/dev/github"
     mkdir -p "$HOME/.local/bin"
 
     # Copy configs
     cp "$repo_dir/config/zsh/devenv.zshrc" "$HOME/.zshrc"
     cp "$repo_dir/config/zsh/p10k.zsh" "$HOME/.p10k.zsh"
-    cp "$repo_dir/config/zsh/aliases.zsh" "$HOME/.dgxspark/zsh/aliases.zsh"
+    cp "$repo_dir/config/zsh/aliases.zsh" "$HOME/.devenv/zsh/aliases.zsh"
     cp "$repo_dir/config/tmux/tmux.conf" "$HOME/.tmux.conf"
     cp "$repo_dir/config/ghostty/config" "$HOME/.config/ghostty/config"
 
